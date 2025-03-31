@@ -7,14 +7,14 @@ import com.suraj.ShoppingCart.model.Product;
 import com.suraj.ShoppingCart.repository.CategoryRepository;
 import com.suraj.ShoppingCart.repository.ProductRepository;
 import com.suraj.ShoppingCart.service.ProductService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 	private final ProductRepository productRepository;
 	private final CategoryRepository categoryRepository;
