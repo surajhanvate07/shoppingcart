@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -47,7 +46,7 @@ public class CategoryServiceImpl implements CategoryService {
 		if (category.getName() == null || category.getName().isEmpty()) {
 			throw new IllegalArgumentException("Category name cannot be null or empty");
 		}
-		if(categoryRepository.existsByName(category.getName())) {
+		if (categoryRepository.existsByName(category.getName())) {
 			throw new AlreadyExistsException("Category with name " + category.getName() + " already exists");
 		}
 		return categoryRepository.save(category);
@@ -60,6 +59,8 @@ public class CategoryServiceImpl implements CategoryService {
 
 		if (category.getName() != null && !category.getName().isEmpty()) {
 			categoryToUpdate.setName(category.getName());
+		} else {
+			throw new IllegalArgumentException("Category name cannot be null or empty");
 		}
 
 		return categoryRepository.save(categoryToUpdate);
