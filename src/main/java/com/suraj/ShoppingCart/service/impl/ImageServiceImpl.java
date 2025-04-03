@@ -38,7 +38,7 @@ public class ImageServiceImpl implements ImageService {
 	}
 
 	@Override
-	public List<ImageDto> saveImages(List<MultipartFile> files, Long productId) {
+	public List<ImageDto> saveImages(Long productId, List<MultipartFile> files) {
 		Product product = productService.getProductById(productId);
 		List<ImageDto> savedImageDto = new ArrayList<>();
 		for (MultipartFile file : files) {
@@ -58,8 +58,8 @@ public class ImageServiceImpl implements ImageService {
 				imageRepository.save(savedImage);
 
 				ImageDto imageDto = new ImageDto();
-				imageDto.setImageId(savedImage.getId());
-				imageDto.setImageName(savedImage.getFileName());
+				imageDto.setId(savedImage.getId());
+				imageDto.setFileName(savedImage.getFileName());
 				imageDto.setDownloadUrl(savedImage.getDownloadUrl());
 				savedImageDto.add(imageDto);
 
