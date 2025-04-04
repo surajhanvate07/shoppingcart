@@ -24,10 +24,10 @@ public class ProductController {
 	public ResponseEntity<ApiResponse> getAllProducts() {
 		try {
 			List<Product> products = productService.getAllProducts();
-			List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
 			if (products.isEmpty()) {
 				return ResponseEntity.status(NOT_FOUND).body(new ApiResponse("No products found", products));
 			}
+			List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
 			return ResponseEntity.ok(new ApiResponse("Products fetched successfully", convertedProducts));
 		} catch (Exception e) {
 			return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("Failed to fetch products", INTERNAL_SERVER_ERROR));
@@ -51,7 +51,8 @@ public class ProductController {
 	public ResponseEntity<ApiResponse> addProduct(@RequestBody ProductDto productDto) {
 		try {
 			Product product = productService.addProduct(productDto);
-			return ResponseEntity.ok(new ApiResponse("Product added successfully", product));
+			ProductDto productDto1 = productService.convertToDto(product);
+			return ResponseEntity.ok(new ApiResponse("Product added successfully", productDto1));
 		} catch (Exception e) {
 			return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("Failed to add product", INTERNAL_SERVER_ERROR));
 		}
@@ -61,7 +62,8 @@ public class ProductController {
 	public ResponseEntity<ApiResponse> updateProduct(@RequestBody ProductDto productDto, @PathVariable("productId") Long productId) {
 		try {
 			Product updatedProduct = productService.updateProductById(productDto, productId);
-			return ResponseEntity.ok(new ApiResponse("Product updated successfully", updatedProduct));
+			ProductDto updatedProductDto = productService.convertToDto(updatedProduct);
+			return ResponseEntity.ok(new ApiResponse("Product updated successfully", updatedProductDto));
 		} catch (ProductNotFoundException e) {
 			return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), NOT_FOUND));
 		} catch (Exception e) {
@@ -85,10 +87,10 @@ public class ProductController {
 	public ResponseEntity<ApiResponse> getProductsByCategory(@PathVariable("category") String category) {
 		try {
 			List<Product> products = productService.getProductsByCategory(category);
-			List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
 			if (products.isEmpty()) {
 				return ResponseEntity.status(NOT_FOUND).body(new ApiResponse("No products found in this category", NOT_FOUND));
 			}
+			List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
 			return ResponseEntity.ok(new ApiResponse("Products fetched successfully", convertedProducts));
 		} catch (Exception e) {
 			return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("Failed to fetch products", INTERNAL_SERVER_ERROR));
@@ -99,10 +101,10 @@ public class ProductController {
 	public ResponseEntity<ApiResponse> getProductsByBrand(@RequestParam String brand) {
 		try {
 			List<Product> products = productService.getProductsByBrand(brand);
-			List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
 			if (products.isEmpty()) {
 				return ResponseEntity.status(NOT_FOUND).body(new ApiResponse("No products found for this brand", NOT_FOUND));
 			}
+			List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
 			return ResponseEntity.ok(new ApiResponse("Products fetched successfully", convertedProducts));
 		} catch (Exception e) {
 			return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("Failed to fetch products", INTERNAL_SERVER_ERROR));
@@ -113,10 +115,10 @@ public class ProductController {
 	public ResponseEntity<ApiResponse> getProductsByCategoryAndBrand(@RequestParam String category, @RequestParam String brand) {
 		try {
 			List<Product> products = productService.getProductsByCategoryAndBrand(category, brand);
-			List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
 			if (products.isEmpty()) {
 				return ResponseEntity.status(NOT_FOUND).body(new ApiResponse("No products found for this category and brand", NOT_FOUND));
 			}
+			List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
 			return ResponseEntity.ok(new ApiResponse("Products fetched successfully", convertedProducts));
 		} catch (Exception e) {
 			return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("Failed to fetch products", INTERNAL_SERVER_ERROR));
@@ -127,10 +129,10 @@ public class ProductController {
 	public ResponseEntity<ApiResponse> getProductsByName(@RequestParam String name) {
 		try {
 			List<Product> products = productService.getProductsByName(name);
-			List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
 			if (products.isEmpty()) {
 				return ResponseEntity.status(NOT_FOUND).body(new ApiResponse("No products found with this name", NOT_FOUND));
 			}
+			List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
 			return ResponseEntity.ok(new ApiResponse("Products fetched successfully", convertedProducts));
 		} catch (Exception e) {
 			return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("Failed to fetch products", INTERNAL_SERVER_ERROR));
@@ -141,10 +143,10 @@ public class ProductController {
 	public ResponseEntity<ApiResponse> getProductsByBrandAndName(@RequestParam String brand, @RequestParam String name) {
 		try {
 			List<Product> products = productService.getProductsByBrandAndName(brand, name);
-			List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
 			if (products.isEmpty()) {
 				return ResponseEntity.status(NOT_FOUND).body(new ApiResponse("No products found for this brand and name", NOT_FOUND));
 			}
+			List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
 			return ResponseEntity.ok(new ApiResponse("Products fetched successfully", convertedProducts));
 		} catch (Exception e) {
 			return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("Failed to fetch products", INTERNAL_SERVER_ERROR));
