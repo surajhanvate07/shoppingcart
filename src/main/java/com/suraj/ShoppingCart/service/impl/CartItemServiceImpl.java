@@ -11,11 +11,13 @@ import com.suraj.ShoppingCart.service.CartService;
 import com.suraj.ShoppingCart.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CartItemServiceImpl implements CartItemService {
 
 	private final CartItemRepository cartItemRepository;
@@ -24,6 +26,7 @@ public class CartItemServiceImpl implements CartItemService {
 	private final CartService cartService;
 
 	@Override
+	@Transactional
 	public void addItemToCart(Long cartId, Long productId, int quantity) {
 		// 1. Get the cart by cartId
 		// 2. Get the product by productId
@@ -72,7 +75,8 @@ public class CartItemServiceImpl implements CartItemService {
 					cartItem.setUnitPrice(cartItem.getProduct().getPrice());
 					cartItem.setTotalPrice();
 				});
-		BigDecimal totalAmount = cart.getTotalAmount();
+		BigDecimal totalAmount = cart.getCartItems().stream().map(CartItem::getTotalPrice)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
 		cart.setTotalAmount(totalAmount);
 		cartRepository.save(cart);
 	}
