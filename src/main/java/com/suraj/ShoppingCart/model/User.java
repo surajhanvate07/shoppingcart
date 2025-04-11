@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.NaturalId;
 
 import java.util.List;
 
@@ -21,6 +22,7 @@ public class User {
 
 	private String firstName;
 	private String lastName;
+	@NaturalId
 	private String email;
 	private String password;
 
