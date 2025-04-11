@@ -10,4 +10,6 @@ public interface CartService {
 	BigDecimal getTotalPrice(Long cartId);
 
 	Long generateCartId();
+
+	Cart getCartByUserId(Long userId);
 }
