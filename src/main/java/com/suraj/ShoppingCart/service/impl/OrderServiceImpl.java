@@ -1,5 +1,6 @@
 package com.suraj.ShoppingCart.service.impl;
 
+import com.suraj.ShoppingCart.dto.OrderDto;
 import com.suraj.ShoppingCart.enums.OrderStatus;
 import com.suraj.ShoppingCart.exceptions.ResourceNotFoundException;
 import com.suraj.ShoppingCart.model.Cart;
@@ -11,6 +12,7 @@ import com.suraj.ShoppingCart.repository.ProductRepository;
 import com.suraj.ShoppingCart.service.CartService;
 import com.suraj.ShoppingCart.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -25,20 +27,23 @@ public class OrderServiceImpl implements OrderService {
 	private final OrderRepository orderRepository;
 	private final ProductRepository productRepository;
 	private final CartService cartService;
+	private final ModelMapper modelMapper;
 
 	@Override
-	public Order getOrder(Long orderId) {
+	public OrderDto getOrder(Long orderId) {
 		return orderRepository.findById(orderId)
+				.map(this::convertToDto)
 				.orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + orderId));
 	}
 
 	@Override
-	public List<Order> getOrdersByUserId(Long userId) {
-		return orderRepository.findByUserId(userId);
+	public List<OrderDto> getOrdersByUserId(Long userId) {
+		List<Order> orders = orderRepository.findByUserId(userId);
+		return orders.stream().map(this::convertToDto).toList();
 	}
 
 	@Override
-	public Order placeOrder(Long userId) {
+	public OrderDto placeOrder(Long userId) {
 		Cart cart = cartService.getCartByUserId(userId);
 		Order order = createOrder(cart);
 		List<OrderItem> orderItemsList = createOrderItems(order, cart);
@@ -46,8 +51,7 @@ public class OrderServiceImpl implements OrderService {
 		order.setTotalAmount(calculateTotalAmount(orderItemsList));
 		Order savedOrder = orderRepository.save(order);
 		cartService.clearCart(cart.getId());
-
-		return savedOrder;
+		return convertToDto(savedOrder);
 	}
 
 	private Order createOrder(Cart cart) {
@@ -68,7 +72,7 @@ public class OrderServiceImpl implements OrderService {
 					product,
 					cartItem.getQuantity(),
 					cartItem.getUnitPrice()
-					);
+			);
 		}).toList();
 	}
 
@@ -77,5 +81,9 @@ public class OrderServiceImpl implements OrderService {
 				.map(orderItem -> orderItem.getPrice()
 						.multiply(new BigDecimal(orderItem.getQuantity())))
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
+
+	private OrderDto convertToDto(Order order) {
+		return modelMapper.map(order, OrderDto.class);
 	}
 }
