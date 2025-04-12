@@ -1,6 +1,7 @@
 package com.suraj.ShoppingCart.controller;
 
 import com.suraj.ShoppingCart.dto.ProductDto;
+import com.suraj.ShoppingCart.exceptions.AlreadyExistsException;
 import com.suraj.ShoppingCart.exceptions.ProductNotFoundException;
 import com.suraj.ShoppingCart.model.Product;
 import com.suraj.ShoppingCart.response.ApiResponse;
@@ -134,6 +135,8 @@ public class ProductController {
 			}
 			List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
 			return ResponseEntity.ok(new ApiResponse("Products fetched successfully", convertedProducts));
+		} catch (AlreadyExistsException e) {
+			return ResponseEntity.status(CONFLICT).body(new ApiResponse(e.getMessage(), CONFLICT));
 		} catch (Exception e) {
 			return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("Failed to fetch products", INTERNAL_SERVER_ERROR));
 		}

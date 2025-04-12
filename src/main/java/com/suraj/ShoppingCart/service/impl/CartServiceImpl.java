@@ -2,6 +2,7 @@ package com.suraj.ShoppingCart.service.impl;
 
 import com.suraj.ShoppingCart.exceptions.ResourceNotFoundException;
 import com.suraj.ShoppingCart.model.Cart;
+import com.suraj.ShoppingCart.model.User;
 import com.suraj.ShoppingCart.repository.CartItemRepository;
 import com.suraj.ShoppingCart.repository.CartRepository;
 import com.suraj.ShoppingCart.service.CartService;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
@@ -28,10 +30,14 @@ public class CartServiceImpl implements CartService {
 		return cartRepository.save(cart);
 	}
 
-	@Override
 	@Transactional
+	@Override
 	public void clearCart(Long cartId) {
 		Cart cart = getCart(cartId);
+		User user = cart.getUser();
+		if (user != null) {
+			user.setCart(null);
+		}
 		cartItemRepository.deleteAllByCartId(cartId);
 		cart.getCartItems().clear();
 		cartRepository.deleteById(cartId);
@@ -44,9 +50,13 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
-	public Long generateCartId() {
-		Cart cart = new Cart();
-		return cartRepository.save(cart).getId();
+	public Cart generateCart(User user) {
+		return Optional.ofNullable(getCartByUserId(user.getId()))
+				.orElseGet(() -> {
+					Cart cart = new Cart();
+					cart.setUser(user);
+					return cartRepository.save(cart);
+				});
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package com.suraj.ShoppingCart.service.impl;
 
 import com.suraj.ShoppingCart.dto.ImageDto;
 import com.suraj.ShoppingCart.dto.ProductDto;
+import com.suraj.ShoppingCart.exceptions.AlreadyExistsException;
 import com.suraj.ShoppingCart.exceptions.ProductNotFoundException;
 import com.suraj.ShoppingCart.model.Category;
 import com.suraj.ShoppingCart.model.Image;
@@ -31,6 +32,9 @@ public class ProductServiceImpl implements ProductService {
 		// 2. Save the product in the new category
 		// 3. If category is present in the database, then use the existing category
 		// 4. Save the product in the existing category
+		if (isProductExists(productDto.getName(), productDto.getBrand())) {
+			throw new AlreadyExistsException(productDto.getBrand() + " " + productDto.getName() + " already exists");
+		}
 		Category category = Optional.ofNullable(categoryRepository.findByName(productDto.getCategory().getName()))
 				.orElseGet(() -> categoryRepository.save(productDto.getCategory()));
 
@@ -39,6 +43,10 @@ public class ProductServiceImpl implements ProductService {
 		Product product = createProduct(productDto, category);
 
 		return productRepository.save(product);
+	}
+
+	private boolean isProductExists(String name, String brand) {
+		return productRepository.existsByNameAndBrand(name, brand);
 	}
 
 	private Product createProduct(ProductDto productDto, Category category) {

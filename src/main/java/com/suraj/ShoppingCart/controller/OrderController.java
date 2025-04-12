@@ -24,7 +24,7 @@ public class OrderController {
 	@PostMapping("/order")
 	public ResponseEntity<ApiResponse> createOrder(@RequestParam Long userId) {
 		try {
-			OrderDto order = orderService.placeOrder(userId);
+			OrderDto orderDto = orderService.placeOrder(userId);
 			return ResponseEntity.ok(new ApiResponse("Order placed successfully", orderDto));
 		} catch (Exception e) {
 			return ResponseEntity.status(INTERNAL_SERVER_ERROR)
