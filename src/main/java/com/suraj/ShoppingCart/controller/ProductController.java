@@ -8,6 +8,7 @@ import com.suraj.ShoppingCart.response.ApiResponse;
 import com.suraj.ShoppingCart.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -48,6 +49,7 @@ public class ProductController {
 		}
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/product/add")
 	public ResponseEntity<ApiResponse> addProduct(@RequestBody ProductDto productDto) {
 		try {
@@ -59,6 +61,7 @@ public class ProductController {
 		}
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping("/product/{productId}/update")
 	public ResponseEntity<ApiResponse> updateProduct(@RequestBody ProductDto productDto, @PathVariable("productId") Long productId) {
 		try {
@@ -72,6 +75,7 @@ public class ProductController {
 		}
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@DeleteMapping("/product/{productId}/delete")
 	public ResponseEntity<ApiResponse> deleteProduct(@PathVariable("productId") Long id) {
 		try {
