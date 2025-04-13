@@ -56,6 +56,8 @@ public class ProductController {
 			Product product = productService.addProduct(productDto);
 			ProductDto productDto1 = productService.convertToDto(product);
 			return ResponseEntity.ok(new ApiResponse("Product added successfully", productDto1));
+		} catch (AlreadyExistsException e) {
+			return ResponseEntity.status(CONFLICT).body(new ApiResponse("Product already exists", CONFLICT));
 		} catch (Exception e) {
 			return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("Failed to add product", INTERNAL_SERVER_ERROR));
 		}
