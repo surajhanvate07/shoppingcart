@@ -4,6 +4,7 @@ import com.suraj.ShoppingCart.response.ApiResponse;
 import com.suraj.ShoppingCart.response.ErrorDetails;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -62,5 +63,14 @@ public class GlobalExceptionHandler {
 				new ErrorDetails(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage())
 		);
 		return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@ExceptionHandler(AccessDeniedException.class)
+	public ResponseEntity<ApiResponse> handleAccessDeniedException(AccessDeniedException ex) {
+		ApiResponse errorResponse = new ApiResponse(
+				"Access denied",
+				new ErrorDetails(HttpStatus.FORBIDDEN.value(), "you do not have permission to access this resource")
+		);
+		return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
 	}
 }
